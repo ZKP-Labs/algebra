@@ -79,11 +79,11 @@ impl PartialEq for FiniteField {
 
 impl Add for FiniteField {
     type Output = Self;
-    fn add(self, rhs: Self) -> Self::Output {
-        if self.prime != rhs.prime {
+    fn add(self, other: Self) -> Self::Output {
+        if self.prime != other.prime {
             panic!("Can not add two numbers in different Fields");
         }
-        let num = self.modulo(&(self.num.clone() + rhs.num));
+        let num = self.modulo(&(self.num.clone() + other.num));
         Self {
             num,
             prime:self.prime.clone(),
@@ -95,12 +95,12 @@ impl Add for FiniteField {
 impl Sub for FiniteField {
     type Output = Self;
 
-    fn sub(self, rhs: Self) -> Self::Output {
-        if self.prime != rhs.prime {
+    fn sub(self, other: Self) -> Self::Output {
+        if self.prime != other.prime {
             panic!("Can not sub two numer is difference Fields");
         }   
 
-        let result = BigInt::from(self.num.clone()) - BigInt::from(rhs.num.clone());
+        let result = BigInt::from(self.num.clone()) - BigInt::from(other.num.clone());
 
         if result < BigInt::zero() {
             let new_num = result + BigInt::from(self.prime.clone());
@@ -121,11 +121,11 @@ impl Sub for FiniteField {
 impl Mul for FiniteField {
     type Output = Self;
 
-    fn mul(self, rhs: Self) -> Self::Output {
-        if self.prime != rhs.prime {
+    fn mul(self, other: Self) -> Self::Output {
+        if self.prime != other.prime {
             panic!("Can not mul two numer is difference Fields");
         }   
-        let num = self.modulo(&(self.num.clone() * rhs.num.clone()));
+        let num = self.modulo(&(self.num.clone() * other.num.clone()));
         Self{
             num,
             prime: self.prime.clone()
@@ -137,15 +137,15 @@ impl Mul for FiniteField {
 impl Div for FiniteField {
     type Output = Self;
 
-    fn div(self, rhs: Self) -> Self::Output {
-        if self.prime != rhs.prime {
+    fn div(self, other: Self) -> Self::Output {
+        if self.prime != other.prime {
             panic!("Can not div two numer is difference Fields");
         }  
 
-        let rhs_inv = rhs.inverse();
-        // let num = self.modulo(&(self.num.clone() * rhs_inv.num.clone()));
+        let other_inv = other.inverse();
+        // let num = self.modulo(&(self.num.clone() * other_inv.num.clone()));
 
-        self * rhs_inv
+        self * other_inv
         // Self {
         //     num,
         //     prime: self.prime.clone()
