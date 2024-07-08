@@ -12,13 +12,17 @@ pub struct FiniteField {
 impl FiniteField {
     pub fn new(num: BigUint, prime: BigUint) -> Self {
         if num >= prime {
-            panic!(
-                "Num {} not in field range 0 to {}",
-                num,
-                prime - BigUint::one()
-            );
+            // panic!(
+            //     "Num {} not in field range 0 to {}",
+            //     num,
+            //     prime - BigUint::one()
+            // );
+            let num = &num % prime.clone();
+            Self {num, prime}
+        } else {
+            Self {num, prime}
         }
-        Self {num, prime}
+        
     }
 
     pub fn zero(prime: BigUint) -> Self {
@@ -165,6 +169,13 @@ mod tests {
     use super::*;
 
     use num_bigint::ToBigUint;
+
+    #[test]
+    fn test_overflow(){
+        let prime = 65537.to_biguint().unwrap();
+        let a = FiniteField::new(65590.to_biguint().unwrap(), prime.clone());
+        assert!(a.num > BigUint::zero())
+    }
 
     #[test]
     fn test_addition() {
