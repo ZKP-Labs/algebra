@@ -143,13 +143,7 @@ impl Div for FiniteField {
         }  
 
         let other_inv = other.inverse();
-        // let num = self.modulo(&(self.num.clone() * other_inv.num.clone()));
-
         self * other_inv
-        // Self {
-        //     num,
-        //     prime: self.prime.clone()
-        // }
     }
 }
 
