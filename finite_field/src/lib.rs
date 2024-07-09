@@ -16,7 +16,10 @@ impl FiniteField {
         } else {
             Self {num, prime}
         }
-        
+    }
+
+    pub fn order(&self) -> BigUint {
+        self.prime.clone()
     }
 
     pub fn zero(prime: BigUint) -> Self {
@@ -42,7 +45,6 @@ impl FiniteField {
             result
         }
     }
-
 
     pub fn inverse(&self) -> Self {
         let a = BigInt::from(self.num.clone());
