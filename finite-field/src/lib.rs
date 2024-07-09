@@ -1,7 +1,6 @@
 use std::ops::{Add, Div, Mul, Sub};
 use num_bigint::{BigInt, BigUint};
 use num_traits::{One, Zero};
-use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct FiniteField {
@@ -162,8 +161,8 @@ fn extended_euclidean_algorithm(a: BigInt, b: BigInt) -> (BigInt, BigInt, BigInt
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use num_bigint::ToBigUint;
+    use std::str::FromStr;
 
     #[test]
     fn test_big_num(){ 
