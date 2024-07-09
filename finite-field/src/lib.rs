@@ -12,11 +12,6 @@ pub struct FiniteField {
 impl FiniteField {
     pub fn new(num: BigUint, prime: BigUint) -> Self {
         if num >= prime {
-            // panic!(
-            //     "Num {} not in field range 0 to {}",
-            //     num,
-            //     prime - BigUint::one()
-            // );
             let num = &num % prime.clone();
             Self {num, prime}
         } else {
@@ -61,13 +56,13 @@ impl FiniteField {
         if num < BigInt::zero() {
             let num = num + BigInt::from(self.prime.clone());
             Self {
-                num: num.try_into().unwrap(),
+                num: num.to_biguint().expect("err"),
                 prime: self.prime.clone(),
             }
             
         } else {
             Self {
-                num: num.try_into().unwrap(),
+                num: num.to_biguint().expect("err"),
                 prime: self.prime.clone(),
             }
             
@@ -109,12 +104,12 @@ impl Sub for FiniteField {
         if result < BigInt::zero() {
             let new_num = result + BigInt::from(self.prime.clone());
             Self {
-                num: new_num.try_into().unwrap(),
+                num: new_num.to_biguint().expect("err"),
                 prime: self.prime.clone(),
             }
         } else {
             Self{
-                num: result.try_into().unwrap(),
+                num: result.to_biguint().expect("err"),
                 prime: self.prime.clone(),
             }
         }
