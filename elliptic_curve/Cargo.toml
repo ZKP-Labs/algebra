@@ -1,0 +1,7 @@
+[package]
+name = "elliptic_curve"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+finite_field = { path = "../finite_field" }
