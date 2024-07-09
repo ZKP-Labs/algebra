@@ -1,7 +1,7 @@
 use std::ops::{Add, Div, Mul, Sub};
 use num_bigint::{BigInt, BigUint};
 use num_traits::{One, Zero};
-
+use std::str::FromStr;
 
 #[derive(Debug, Clone)]
 pub struct FiniteField {
@@ -166,17 +166,17 @@ mod tests {
     use num_bigint::ToBigUint;
 
     #[test]
-    fn test_overflow(){
-        let prime = 65537.to_biguint().unwrap();
-        let a = FiniteField::new(65590.to_biguint().unwrap(), prime.clone());
-        assert!(a.num > BigUint::zero())
+    fn test_big_num(){ 
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = FiniteField::new(BigUint::from_str("65590").unwrap(), prime.clone());
+        assert!(a.num < a.prime)
     }
 
     #[test]
     fn test_addition() {
-        let prime = 65537.to_biguint().unwrap();
-        let a = FiniteField::new(56638.to_biguint().unwrap(), prime.clone());
-        let b = FiniteField::new(15431.to_biguint().unwrap(), prime.clone());
+        let prime = BigUint::from_str("65537").unwrap(); 
+        let a = FiniteField::new(BigUint::from_str("56638").unwrap(), prime.clone());
+        let b = FiniteField::new(BigUint::from_str("15431").unwrap(), prime.clone());
         let result = a + b;
         let expected = FiniteField::new(6532.to_biguint().unwrap(), prime);
         assert_eq!(result, expected);
@@ -184,19 +184,19 @@ mod tests {
 
     #[test]
     fn test_subtraction() {
-        let prime = 65537.to_biguint().unwrap();
+        let prime = BigUint::from_str("65537").unwrap();
         let a = FiniteField::new(2.to_biguint().unwrap(), prime.clone());
         let b = FiniteField::new(3.to_biguint().unwrap(), prime.clone());
         let result = a - b;
-        let expected = FiniteField::new(65536.to_biguint().unwrap(), prime);
+        let expected = FiniteField::new(BigUint::from_str("65536").unwrap(), prime);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn test_multilplication() {
-        let prime = 65537.to_biguint().unwrap();
-        let a = FiniteField::new(23030.to_biguint().unwrap(), prime.clone());
-        let b = FiniteField::new(35563.to_biguint().unwrap(), prime.clone());
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = FiniteField::new(BigUint::from_str("23030").unwrap(), prime.clone());
+        let b = FiniteField::new(BigUint::from_str("35563").unwrap(), prime.clone());
         let result = a*b;
         let expected = FiniteField::new(1.to_biguint().unwrap(), prime);
         assert_eq!(result, expected);
@@ -204,30 +204,30 @@ mod tests {
 
     #[test]
     fn test_pow() {
-        let prime = 65537.to_biguint().unwrap();
-        let base = FiniteField::new(2542.to_biguint().unwrap(), prime.clone());
+        let prime = BigUint::from_str("65537").unwrap();
+        let base = FiniteField::new(BigUint::from_str("2542").unwrap(), prime.clone());
         let exp: u32 = 13053;
         let rs = base.pow(exp);
-        let expected = FiniteField::new(64259.to_biguint().unwrap(), prime.clone());
+        let expected = FiniteField::new(BigUint::from_str("64259").unwrap(), prime.clone());
         assert_eq!(rs, expected);
     }
 
     #[test]
     fn test_inverse() {
-        let prime = 65537.to_biguint().unwrap();
-        let a = FiniteField::new(40952.to_biguint().unwrap(), prime.clone());
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = FiniteField::new(BigUint::from_str("40952").unwrap(), prime.clone());
         let result = a.inverse();
-        let expected = FiniteField::new(9498.to_biguint().unwrap(), prime);
+        let expected = FiniteField::new(BigUint::from_str("9498").unwrap(), prime);
         assert_eq!(result, expected);
     }
     
     #[test]
     fn test_division() {
-        let prime = 65537.to_biguint().unwrap();
-        let a = FiniteField::new(40952.to_biguint().unwrap(), prime.clone());
-        let b = FiniteField::new(40286.to_biguint().unwrap(), prime.clone());
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = FiniteField::new(BigUint::from_str("40952").unwrap(), prime.clone());
+        let b = FiniteField::new(BigUint::from_str("40286").unwrap(), prime.clone());
         let result = a / b;
-        let expected = FiniteField::new(41712.to_biguint().unwrap(), prime);
+        let expected = FiniteField::new(BigUint::from_str("41712").unwrap(), prime);
         assert_eq!(result, expected);
     }  
 
