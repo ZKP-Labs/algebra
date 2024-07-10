@@ -1,7 +1,7 @@
 use std::ops::Add;
 use finite_field::ff::FiniteField as FF;
 use num_bigint::BigUint;
-use num_traits::Zero;
+use num_traits::{Zero, One};
 
 #[derive(Debug, Clone)]
 pub struct Point {
@@ -46,15 +46,15 @@ impl Point {
         self.x.is_none() && self.y.is_none()
     }
 
-    pub fn scalar_mul(&self, mut n: u32) -> Self {
+    pub fn scalar_mul(&self, mut n: BigUint) -> Self {
         let mut q = self.clone();
         let mut r = Point::new(None, None, q.a.clone(), q.b.clone());
-        while n > 0 {
-            if n % 2 == 1 {
+        while n > BigUint::zero() {
+            if n.clone() % BigUint::from(2_u32) == BigUint::one() {
                 r = r + q.clone();
             }
             q = q.clone() + q.clone();
-            n = n / 2;
+            n = n.clone() / BigUint::from(2_u32);
         }
         r
     }
@@ -219,7 +219,7 @@ mod tests {
         let x1 = FF::new(x1, p.clone());
         let y1 = FF::new(y1, p.clone());
         let pp = Point::new(Some(x1.clone()), Some(y1.clone()), a.clone(), b.clone());
-        let n = 1073741824;
+        let n = BigUint::from(1073741824_u32);
         
         let x = BigUint::from_str("61611953048517811650664679398419437441390089727362306165129633387128161805960").unwrap();
         let y = BigUint::from_str("10250536693719006916088998792381667957869597354334095501142440685140205495795").unwrap();

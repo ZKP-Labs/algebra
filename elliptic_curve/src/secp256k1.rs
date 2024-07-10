@@ -66,7 +66,7 @@ mod tests {
         let y = BigUint::from_str_radix("483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8", 16).unwrap();
         let g = secp256k1.point(x, y);
         assert_eq!(secp256k1.g(), &g);
-        assert_eq!(secp256k1.g.scalar_mul(100) + g.clone(), g.clone().scalar_mul(101));
+        assert_eq!(secp256k1.g.scalar_mul(BigUint::from(100_u32)) + g.clone(), g.clone().scalar_mul(BigUint::from(101_u32)));
     }
 
     #[test]
