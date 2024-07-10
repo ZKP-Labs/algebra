@@ -1,6 +1,6 @@
 use num_bigint::BigUint;
 use crate::point::Point;
-use finite_field::FiniteField as FF;
+use finite_field::ff::FiniteField as FF;
 use num_traits::{Num, Zero};
 
 #[derive(Debug, Clone)]

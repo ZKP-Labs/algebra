@@ -1,5 +1,5 @@
 use std::ops::Add;
-use finite_field::FiniteField as FF;
+use finite_field::ff::FiniteField as FF;
 use num_bigint::BigUint;
 
 #[derive(Debug, Clone)]
