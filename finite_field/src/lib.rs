@@ -22,6 +22,7 @@ impl FiniteField {
         self.prime.clone()
     }
 
+
     pub fn zero(prime: BigUint) -> Self {
         Self {
             num: BigUint::zero(),
@@ -76,6 +77,8 @@ impl PartialEq for FiniteField {
         self.num == other.num && self.prime == other.prime
     }    
 }
+
+impl Eq for FiniteField {}
 
 impl Add for FiniteField {
     type Output = Self;
