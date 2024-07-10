@@ -1,4 +1,4 @@
-use num_bigint::BigInt;
+use num_bigint::{BigInt, BigUint};
 use num_traits::{One, Zero};
 
 pub fn extended_euclidean_algorithm(a: BigInt, b: BigInt) -> (BigInt, BigInt, BigInt) {
@@ -10,4 +10,9 @@ pub fn extended_euclidean_algorithm(a: BigInt, b: BigInt) -> (BigInt, BigInt, Bi
         let y = x1 - (&a / &b) * y1;
         (gcd, x, y)
     }
+}
+
+pub fn sqrt_root(x: BigUint, p: BigUint) -> BigUint {
+    let p1 = (p.clone() + BigUint::one()) / BigUint::from(4_u32);
+    x.modpow(&p1, &p)
 }

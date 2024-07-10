@@ -1,6 +1,7 @@
 use std::ops::Add;
 use finite_field::ff::FiniteField as FF;
 use num_bigint::BigUint;
+use num_traits::Zero;
 
 #[derive(Debug, Clone)]
 pub struct Point {
@@ -21,6 +22,28 @@ impl Point {
             panic!("Not in curve");
         }   
         return Self {x , y, a, b};
+    }
+
+    pub fn x(&self) -> FF {
+        if self.x.is_none() {
+            return FF::zero(self.a.prime.clone());
+        } 
+        self.x.clone().unwrap()
+    }
+
+    pub fn y(&self) -> FF {
+        if self.y.is_none() {
+            return FF::zero(self.a.prime.clone());
+        } 
+        self.y.clone().unwrap()
+    }
+
+    pub fn xy(&self) -> (FF, FF) {
+        (self.x(), self.y())
+    }
+
+    pub fn is_infinity(&self) -> bool {
+        self.x.is_none() && self.y.is_none()
     }
 
     pub fn scalar_mul(&self, mut n: u32) -> Self {

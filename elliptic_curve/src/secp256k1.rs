@@ -1,6 +1,7 @@
 use num_bigint::BigUint;
 use crate::point::Point;
 use finite_field::ff::FiniteField as FF;
+use finite_field::helper::sqrt_root;
 use num_traits::{Num, Zero};
 
 #[derive(Debug, Clone)]
@@ -39,7 +40,20 @@ impl Secp256k1 {
     pub fn point(&self, x: BigUint, y: BigUint) -> Point {
         Point::new(Some(FF::new(x, self.p.clone())), Some(FF::new(y, self.p.clone())), self.a.clone(), self.b.clone())
     }
+
+    pub fn lift_x(&self, x: BigUint) -> Point {
+        let y = x.clone().pow(3) + self.a.clone().num * x.clone() + self.b.clone().num;
+        let y = sqrt_root(y, self.p.clone());
+
+        Point::new(Some(FF::new(x, self.p.clone())), 
+                    Some(FF::new(y, self.p.clone())), 
+                    self.a.clone(), 
+                    self.b.clone())
+
+    }
+
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -54,5 +68,12 @@ mod tests {
         assert_eq!(secp256k1.g(), &g);
         assert_eq!(secp256k1.g.scalar_mul(100) + g.clone(), g.clone().scalar_mul(101));
     }
-    
+
+    #[test]
+    pub fn test_lift_x() {
+        let secp256k1 = Secp256k1::new();
+        let x = BigUint::from_str_radix("79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", 16).unwrap();
+        assert_eq!(secp256k1.lift_x(x), secp256k1.g);
+        
+    }
 }
