@@ -123,7 +123,6 @@ impl Add for Point {
 #[cfg(test)]
 mod tests {
     use crate::point::Point;
-    use crate::secp256k1::Secp256k1;
     use std::str::FromStr;
     use num_bigint::BigUint;
     use num_traits::{FromPrimitive, Num, Zero};
