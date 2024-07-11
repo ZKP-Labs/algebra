@@ -2,7 +2,6 @@ use sha2::{Sha256,Digest};
 use crate::secp256k1::Secp256k1;
 use num_bigint::{BigUint, RandomBits};
 use crate::point::Point;
-use std::str::FromStr;
 use rand::Rng;
 
 pub struct Ecdsa {
@@ -51,6 +50,8 @@ impl Ecdsa {
 
 mod tests {
     use super::*;
+    use std::str::FromStr;
+    
     #[test]
     fn test_hash() {
         let mut rng = rand::thread_rng();
@@ -61,6 +62,7 @@ mod tests {
         assert_eq!(h, BigUint::from_str("20329878786436204988385760252021328656300425018755239228739303522659023427620").unwrap());
     }
 
+    #[test]
     fn test_sign_verify() {
         let mut rng = rand::thread_rng();
         let d: BigUint = rng.sample(RandomBits::new(256));
