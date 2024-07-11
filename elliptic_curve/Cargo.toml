@@ -5,5 +5,6 @@ edition = "2021"
 
 [dependencies]
 finite_field = { path = "../finite_field" }
-num-bigint = "0.4.3"
+num-bigint = {version = "0.4.3", features = ["rand"]}
 num-traits = "0.2.16"
+sha2 = "0.10.8"
