@@ -8,3 +8,4 @@ finite_field = { path = "../finite_field" }
 num-bigint = {version = "0.4.3", features = ["rand"]}
 num-traits = "0.2.16"
 sha2 = "0.10.8"
+rand = "0.8.5"
