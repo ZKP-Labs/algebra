@@ -72,3 +72,4 @@ mod tests {
         assert!(ecdsa.verify(m, r, s));
     }
 }
+

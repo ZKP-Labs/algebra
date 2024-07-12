@@ -1,5 +1,6 @@
 use std::ops::Add;
-use finite_field::ff::FiniteField as FF;
+use finite_field::ff::PrimeField as FF;
+use finite_field::ff::FiniteField;
 use num_bigint::BigUint;
 use num_traits::{Zero, One};
 
