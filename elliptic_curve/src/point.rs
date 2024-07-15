@@ -4,19 +4,46 @@ use finite_field::ff::FiniteField;
 use num_bigint::BigUint;
 use num_traits::{Zero, One};
 
+pub trait Point:
+    Sized
+    + PartialEq
+    + Add<Self, Output=Self>
+{
+    /// create a new point
+    fn new(x: Option<FF>, y: Option<FF>, a: FF, b: FF) -> Self;
+
+    /// return x
+    fn x(&self) -> FF;
+
+    /// return y
+    fn y(&self) -> FF;
+
+    /// return (x, y)
+    fn xy(&self) -> (FF, FF);
+}
+
 #[derive(Debug, Clone)]
-pub struct Point {
+pub struct ECCPoint {
     pub x: Option<FF>,
     pub y: Option<FF>,
     pub a: FF,
     pub b: FF,
 }
 
-impl Point {
-    pub fn new(x: Option<FF>, y: Option<FF>, a:FF, b:FF) -> Self {
+impl Point for ECCPoint {
+    fn new(x: Option<FF>, y: Option<FF>, a:FF, b:FF) -> Self {
         if x.is_none() && y.is_none() {
             return Self {x, y, a, b};
         } 
+
+        if x.is_none() && y.is_some() {
+            panic!("Invalid point");
+        }
+
+        if y.is_none() && x.is_some() {
+            panic!("Invalid point");
+        }
+
         if y.clone().unwrap().pow(2) != x.clone().unwrap().pow(3) 
                                             + a.clone()*x.clone().unwrap().clone() 
                                             + b.clone() {
@@ -25,31 +52,40 @@ impl Point {
         return Self {x , y, a, b};
     }
 
-    pub fn x(&self) -> FF {
+    fn x(&self) -> FF {
         if self.x.is_none() {
-            return FF::zero(self.a.prime.clone());
+            return self.a.to_zero();
         } 
         self.x.clone().unwrap()
     }
 
-    pub fn y(&self) -> FF {
+    fn y(&self) -> FF {
         if self.y.is_none() {
-            return FF::zero(self.a.prime.clone());
+            return self.a.to_zero();
         } 
         self.y.clone().unwrap()
     }
 
-    pub fn xy(&self) -> (FF, FF) {
+    fn xy(&self) -> (FF, FF) {
         (self.x(), self.y())
     }
+}
 
+impl ECCPoint {
+
+    /// return true if the point is infinity
     pub fn is_infinity(&self) -> bool {
         self.x.is_none() && self.y.is_none()
     }
 
+    /// implement scalar multiplication in elliptic curve
+    /// 
+    /// input: n
+    /// 
+    /// output: n*P which P is point in elliptic curve
     pub fn scalar_mul(&self, mut n: BigUint) -> Self {
         let mut q = self.clone();
-        let mut r = Point::new(None, None, q.a.clone(), q.b.clone());
+        let mut r = ECCPoint::new(None, None, q.a.clone(), q.b.clone());
         while n > BigUint::zero() {
             if n.clone() % BigUint::from(2_u32) == BigUint::one() {
                 r = r + q.clone();
@@ -60,7 +96,9 @@ impl Point {
         r
     }
 
-    pub fn infinity_point(a: FF, b: FF) -> Self {
+
+    /// return infinity point
+    pub fn new_infinity_point(a: FF, b: FF) -> Self {
         Self {
             x: None,
             y: None,
@@ -70,8 +108,8 @@ impl Point {
     }
 }
 
-impl PartialEq for Point {
-    fn eq(&self, other: &Point) -> bool { 
+impl PartialEq for ECCPoint {
+    fn eq(&self, other: &ECCPoint) -> bool { 
         self.x == other.x 
         && self.y == other.y 
         && self.a == other.a 
@@ -79,7 +117,7 @@ impl PartialEq for Point {
     }    
 }
 
-impl Add for Point {
+impl Add for ECCPoint {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -167,9 +205,8 @@ mod tests {
         let gx = FF::new(x, p.clone());
         let gy = FF::new(y, p.clone());
         
-
-        let k = Point::new(Some(gx.clone()),Some(gy.clone()),a.clone(),b.clone());
-        let k1 = Point::new(Some(gx.clone()),Some(gy.clone()),a.clone(),b.clone());
+        let k = ECCPoint::new(Some(gx.clone()),Some(gy.clone()),a.clone(),b.clone());
+        let k1 = ECCPoint::new(Some(gx.clone()),Some(gy.clone()),a.clone(),b.clone());
         assert_eq!(k.clone().y.unwrap().pow(2),k.clone().x.unwrap().pow(3) + k.b.clone());
         assert_eq!(k.clone(), k1);
     }
@@ -185,7 +222,7 @@ mod tests {
 
         let x1 = FF::new(x1, p.clone());
         let y1 = FF::new(y1, p.clone());
-        let pp = Point::new(Some(x1.clone()), Some(y1.clone()), a.clone(), b.clone());
+        let pp = ECCPoint::new(Some(x1.clone()), Some(y1.clone()), a.clone(), b.clone());
 
         let x2 = BigUint::from_str("11836935774968833838816391111149481227030000373644152368864624284734962045370").unwrap();
         let y2 = BigUint::from_str("95059496343748871885283713597473300370257361075022743150847197727772278759251").unwrap();
@@ -200,9 +237,9 @@ mod tests {
 
         let x = FF::new(x, p.clone());
         let y = FF::new(y, p.clone());
-        let rs = Point::new(Some(x.clone()), Some(y.clone()), a.clone(), b.clone());
+        let rs = ECCPoint::new(Some(x.clone()), Some(y.clone()), a.clone(), b.clone());
 
-        let infinite = Point::infinity_point(a.clone(), b.clone());
+        let infinite = ECCPoint::new_infinity_point(a.clone(), b.clone());
         assert_eq!(pp.clone() + infinite, pp.clone());
         assert_eq!(pp.clone() + pp.clone() + q, rs);
     }
@@ -219,7 +256,7 @@ mod tests {
 
         let x1 = FF::new(x1, p.clone());
         let y1 = FF::new(y1, p.clone());
-        let pp = Point::new(Some(x1.clone()), Some(y1.clone()), a.clone(), b.clone());
+        let pp = ECCPoint::new(Some(x1.clone()), Some(y1.clone()), a.clone(), b.clone());
         let n = BigUint::from(1073741824_u32);
         
         let x = BigUint::from_str("61611953048517811650664679398419437441390089727362306165129633387128161805960").unwrap();
@@ -227,7 +264,7 @@ mod tests {
 
         let x = FF::new(x, p.clone());
         let y = FF::new(y, p.clone());
-        let rs = Point::new(Some(x.clone()), Some(y.clone()), a.clone(), b.clone());
+        let rs = ECCPoint::new(Some(x.clone()), Some(y.clone()), a.clone(), b.clone());
 
         assert_eq!(pp.scalar_mul(n), rs);
     }

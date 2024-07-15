@@ -11,22 +11,53 @@ pub struct PrimeField {
 
 pub trait FiniteField:
         Sized 
+        + PartialEq
         + Add<Self, Output=Self>
         + Sub<Self, Output=Self>
         + Mul<Self, Output=Self>
         + Div<Self, Output=Self>
 {
+
+    /// Create a new number in the field
+    /// 
+    /// If the number is greater than the prime, it will be reduced by the prime
+    /// 
+    /// struct PrimeField { num: BigUint, prime: BigUint }
     fn new(num: BigUint, prime: BigUint) -> Self;
 
+    /// Return the order of the field
+    /// 
+    /// return type: BigUint
     fn order(&self) -> BigUint;
 
+    /// Create a new number in the field with value 0 in the field
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
     fn zero(prime: BigUint) -> Self;
 
+    /// Return the number raised to the power of exp
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
     fn pow(&self, exp: u32) -> Self;
 
+    /// Return the inverse of the number
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
+    /// 
+    /// example: 3^-1 = 2 mod 5 such that 3*2 = 1 mod 5
     fn inverse(&self) -> Self;
 
+    /// modulo operation 
+    /// 
+    /// return type: BigUint
+    /// 
+    /// example: -1 % 5 = 4 (not -1)
     fn modulo(&self, b: &BigUint) -> BigUint;
+
+    /// Return the number with value 0 in the field
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
+    fn to_zero(&self) -> Self;
 }
 
 impl FiniteField for PrimeField {
@@ -89,6 +120,10 @@ impl FiniteField for PrimeField {
             }
             
         }
+    }
+
+    fn to_zero(&self) -> Self {
+        Self::zero(self.prime.clone())
     }
 }
 
@@ -176,6 +211,23 @@ mod tests {
         let prime = BigUint::from_str("65537").unwrap();
         let a = PrimeField::new(BigUint::from_str("65590").unwrap(), prime.clone());
         assert!(a.num < a.prime)
+    }
+
+    #[test]
+    fn test_order() {
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = PrimeField::new(BigUint::from_str("65590").unwrap(), prime.clone());
+        let order = a.order();
+        assert_eq!(order, prime);
+    }
+
+    #[test]
+    fn test_zero() {
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = PrimeField::new(BigUint::from_str("65590").unwrap(), prime.clone());
+        let zero = a.to_zero();
+        assert_eq!(zero.num, BigUint::zero());
+        assert_eq!(zero, PrimeField::zero(prime));
     }
 
     #[test]
