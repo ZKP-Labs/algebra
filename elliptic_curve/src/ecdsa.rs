@@ -12,12 +12,15 @@ pub struct Ecdsa {
 }
 
 impl Ecdsa {
+
+    /// Create a new ECDSA with private key d
     pub fn new(d: BigUint) -> Self {
         let e = Secp256k1::new();
         let pub_key = e.g().clone().scalar_mul(d.clone());
         Self {e, d, pub_key}
     }
 
+    /// Hash a message
     pub fn hash(&self, m: &str) -> BigUint {
         let mut hasher = Sha256::new();
         hasher.update(m.as_bytes());
@@ -25,6 +28,7 @@ impl Ecdsa {
         BigUint::from_bytes_be(&result)
     }
 
+    /// Sign a message
     pub fn sign(&self, m: &str) -> (BigUint, BigUint) {
         let mut rng = rand::thread_rng();
         let z = self.hash(m);
@@ -35,6 +39,7 @@ impl Ecdsa {
         (r, s)
     }
 
+    /// Verify a signature
     pub fn verify(&self, m: &str, r: BigUint, s: BigUint) -> bool {
         let z = self.hash(m);
         let s_inv = s.modpow(&(self.e.n() - BigUint::from(2_u32)), self.e.n());

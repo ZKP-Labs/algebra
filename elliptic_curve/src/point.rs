@@ -32,24 +32,20 @@ pub struct ECCPoint {
 
 impl Point for ECCPoint {
     fn new(x: Option<FF>, y: Option<FF>, a:FF, b:FF) -> Self {
-        if x.is_none() && y.is_none() {
-            return Self {x, y, a, b};
-        } 
 
-        if x.is_none() && y.is_some() {
-            panic!("Invalid point");
+        match (x, y) {
+            (Some(x), Some(y)) => {
+                if y.clone().pow(2) != x.clone().pow(3) + a.clone()*x.clone() + b.clone() {
+                    panic!("Not in curve");
+                }
+                return Self {x: Some(x), y: Some(y), a, b};
+            },
+            (None, None) => {
+                return Self {x: None, y: None, a, b};
+            },
+            _ => panic!("Invalid point")
+            
         }
-
-        if y.is_none() && x.is_some() {
-            panic!("Invalid point");
-        }
-
-        if y.clone().unwrap().pow(2) != x.clone().unwrap().pow(3) 
-                                            + a.clone()*x.clone().unwrap().clone() 
-                                            + b.clone() {
-            panic!("Not in curve");
-        }   
-        return Self {x , y, a, b};
     }
 
     fn x(&self) -> FF {

@@ -16,6 +16,8 @@ pub struct Secp256k1 {
 }
 
 impl Secp256k1 {
+
+    /// Create a new secp256k1 curve
     pub fn new() -> Self {
         let p = BigUint::from_str_radix("fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f", 16).unwrap();
         let a = FF::new(BigUint::zero(), p.clone());
@@ -31,18 +33,22 @@ impl Secp256k1 {
         Self {a, b, p, g, n}
     }
 
+    /// Return the generator point
     pub fn g(&self) -> &Point {
         &self.g
     }
 
+    /// return the n which is the order of the generator point
     pub fn n(&self) -> &BigUint {
         &self.n
     }
 
+    /// create a new point
     pub fn point(&self, x: BigUint, y: BigUint) -> Point {
         Point::new(Some(FF::new(x, self.p.clone())), Some(FF::new(y, self.p.clone())), self.a.clone(), self.b.clone())
     }
 
+    /// lift x to a point which mean return a point (x, y) such that y^2 = x^3 + ax + b mod p
     pub fn lift_x(&self, x: BigUint) -> Point {
         let y = x.clone().pow(3) + self.a.clone().num * x.clone() + self.b.clone().num;
         let y = sqrt_root(y, self.p.clone());
@@ -76,6 +82,5 @@ mod tests {
         let secp256k1 = Secp256k1::new();
         let x = BigUint::from_str_radix("79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", 16).unwrap();
         assert_eq!(secp256k1.lift_x(x), secp256k1.g);
-        
     }
 }

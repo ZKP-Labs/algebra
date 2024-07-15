@@ -50,7 +50,6 @@ pub fn sqrt_root(x: BigUint, p: BigUint) -> BigUint {
 
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     
@@ -76,7 +75,7 @@ mod tests {
     #[test]
     pub fn test_sqrt_root() {
         let x = BigUint::from(13_u32);
-        // p = 17 = 1 mod 4
+        // p = 23 = 3 mod 4
         let p = BigUint::from(23_u32);
         let result = sqrt_root(x, p);
         assert_eq!(result, BigUint::from(6_u32));
