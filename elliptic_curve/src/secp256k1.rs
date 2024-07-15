@@ -1,6 +1,8 @@
 use num_bigint::BigUint;
-use crate::point::Point;
-use finite_field::ff::FiniteField as FF;
+use crate::point::ECCPoint as Point;
+use crate::point::Point as point;
+use finite_field::ff::PrimeField as FF;
+use finite_field::ff::FiniteField;
 use finite_field::helper::sqrt_root;
 use num_traits::{Num, Zero};
 

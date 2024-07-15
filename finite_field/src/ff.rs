@@ -4,13 +4,64 @@ use num_traits::{One, Zero};
 use crate::helper::extended_euclidean_algorithm;
 
 #[derive(Debug, Clone)]
-pub struct FiniteField {
+pub struct PrimeField {
     pub num: BigUint,
     pub prime: BigUint,
 }
 
-impl FiniteField {
-    pub fn new(num: BigUint, prime: BigUint) -> Self {
+pub trait FiniteField:
+        Sized 
+        + PartialEq
+        + Add<Self, Output=Self>
+        + Sub<Self, Output=Self>
+        + Mul<Self, Output=Self>
+        + Div<Self, Output=Self>
+{
+
+    /// Create a new number in the field
+    /// 
+    /// If the number is greater than the prime, it will be reduced by the prime
+    /// 
+    /// struct PrimeField { num: BigUint, prime: BigUint }
+    fn new(num: BigUint, prime: BigUint) -> Self;
+
+    /// Return the order of the field
+    /// 
+    /// return type: BigUint
+    fn order(&self) -> BigUint;
+
+    /// Create a new number in the field with value 0 in the field
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
+    fn zero(prime: BigUint) -> Self;
+
+    /// Return the number raised to the power of exp
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
+    fn pow(&self, exp: u32) -> Self;
+
+    /// Return the inverse of the number
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
+    /// 
+    /// example: 3^-1 = 2 mod 5 such that 3*2 = 1 mod 5
+    fn inverse(&self) -> Self;
+
+    /// modulo operation 
+    /// 
+    /// return type: BigUint
+    /// 
+    /// example: -1 % 5 = 4 (not -1)
+    fn modulo(&self, b: &BigUint) -> BigUint;
+
+    /// Return the number with value 0 in the field
+    /// 
+    /// return type: struct PrimeField { num: BigUint, prime: BigUint }
+    fn to_zero(&self) -> Self;
+}
+
+impl FiniteField for PrimeField {
+    fn new(num: BigUint, prime: BigUint) -> Self {
         if num >= prime {
             let num = &num % prime.clone();
             Self {num, prime}
@@ -19,19 +70,18 @@ impl FiniteField {
         }
     }
 
-    pub fn order(&self) -> BigUint {
+    fn order(&self) -> BigUint {
         self.prime.clone()
     }
 
-
-    pub fn zero(prime: BigUint) -> Self {
+    fn zero(prime: BigUint) -> Self {
         Self {
             num: BigUint::zero(),
             prime,
         }
     }
 
-    pub fn pow(&self, exp: u32) -> Self {
+    fn pow(&self, exp: u32) -> Self {
         let num = self.modulo(&self.num.pow(exp));
         Self {
             num,
@@ -39,7 +89,7 @@ impl FiniteField {
         }
     }
 
-    pub fn modulo(&self, b: &BigUint) -> BigUint {
+    fn modulo(&self, b: &BigUint) -> BigUint {
         let result = b % self.prime.clone();
         if result < BigUint::zero() {
             result + self.prime.clone()
@@ -48,7 +98,7 @@ impl FiniteField {
         }
     }
 
-    pub fn inverse(&self) -> Self {
+    fn inverse(&self) -> Self {
         let a = BigInt::from(self.num.clone());
         let b = BigInt::from(self.prime.clone());
         let (gcd, num, _) = extended_euclidean_algorithm(a, b);
@@ -71,15 +121,19 @@ impl FiniteField {
             
         }
     }
+
+    fn to_zero(&self) -> Self {
+        Self::zero(self.prime.clone())
+    }
 }
 
-impl PartialEq for FiniteField {
-    fn eq(&self, other: &FiniteField) -> bool { 
+impl PartialEq for PrimeField {
+    fn eq(&self, other: &PrimeField) -> bool { 
         self.num == other.num && self.prime == other.prime
     }    
 }
 
-impl Add for FiniteField {
+impl Add for PrimeField {
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
         if self.prime != other.prime {
@@ -93,7 +147,7 @@ impl Add for FiniteField {
     }
 }
 
-impl Sub for FiniteField {
+impl Sub for PrimeField {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
@@ -118,8 +172,7 @@ impl Sub for FiniteField {
     }
 }
 
-
-impl Mul for FiniteField {
+impl Mul for PrimeField {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self::Output {
@@ -134,8 +187,7 @@ impl Mul for FiniteField {
     }
 }
 
-
-impl Div for FiniteField {
+impl Div for PrimeField {
     type Output = Self;
 
     fn div(self, other: Self) -> Self::Output {
@@ -148,7 +200,6 @@ impl Div for FiniteField {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -158,66 +209,83 @@ mod tests {
     #[test]
     fn test_big_num(){ 
         let prime = BigUint::from_str("65537").unwrap();
-        let a = FiniteField::new(BigUint::from_str("65590").unwrap(), prime.clone());
+        let a = PrimeField::new(BigUint::from_str("65590").unwrap(), prime.clone());
         assert!(a.num < a.prime)
+    }
+
+    #[test]
+    fn test_order() {
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = PrimeField::new(BigUint::from_str("65590").unwrap(), prime.clone());
+        let order = a.order();
+        assert_eq!(order, prime);
+    }
+
+    #[test]
+    fn test_zero() {
+        let prime = BigUint::from_str("65537").unwrap();
+        let a = PrimeField::new(BigUint::from_str("65590").unwrap(), prime.clone());
+        let zero = a.to_zero();
+        assert_eq!(zero.num, BigUint::zero());
+        assert_eq!(zero, PrimeField::zero(prime));
     }
 
     #[test]
     fn test_addition() {
         let prime = BigUint::from_str("65537").unwrap(); 
-        let a = FiniteField::new(BigUint::from_str("56638").unwrap(), prime.clone());
-        let b = FiniteField::new(BigUint::from_str("15431").unwrap(), prime.clone());
+        let a = PrimeField::new(BigUint::from_str("56638").unwrap(), prime.clone());
+        let b = PrimeField::new(BigUint::from_str("15431").unwrap(), prime.clone());
         let result = a + b;
-        let expected = FiniteField::new(6532.to_biguint().unwrap(), prime);
+        let expected = PrimeField::new(6532.to_biguint().unwrap(), prime);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn test_subtraction() {
         let prime = BigUint::from_str("65537").unwrap();
-        let a = FiniteField::new(2.to_biguint().unwrap(), prime.clone());
-        let b = FiniteField::new(3.to_biguint().unwrap(), prime.clone());
+        let a = PrimeField::new(2.to_biguint().unwrap(), prime.clone());
+        let b = PrimeField::new(3.to_biguint().unwrap(), prime.clone());
         let result = a - b;
-        let expected = FiniteField::new(BigUint::from_str("65536").unwrap(), prime);
+        let expected = PrimeField::new(BigUint::from_str("65536").unwrap(), prime);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn test_multilplication() {
         let prime = BigUint::from_str("65537").unwrap();
-        let a = FiniteField::new(BigUint::from_str("23030").unwrap(), prime.clone());
-        let b = FiniteField::new(BigUint::from_str("35563").unwrap(), prime.clone());
+        let a = PrimeField::new(BigUint::from_str("23030").unwrap(), prime.clone());
+        let b = PrimeField::new(BigUint::from_str("35563").unwrap(), prime.clone());
         let result = a*b;
-        let expected = FiniteField::new(1.to_biguint().unwrap(), prime);
+        let expected = PrimeField::new(1.to_biguint().unwrap(), prime);
         assert_eq!(result, expected);
     }
 
     #[test]
     fn test_pow() {
         let prime = BigUint::from_str("65537").unwrap();
-        let base = FiniteField::new(BigUint::from_str("2542").unwrap(), prime.clone());
+        let base = PrimeField::new(BigUint::from_str("2542").unwrap(), prime.clone());
         let exp: u32 = 13053;
         let rs = base.pow(exp);
-        let expected = FiniteField::new(BigUint::from_str("64259").unwrap(), prime.clone());
+        let expected = PrimeField::new(BigUint::from_str("64259").unwrap(), prime.clone());
         assert_eq!(rs, expected);
     }
 
     #[test]
     fn test_inverse() {
         let prime = BigUint::from_str("65537").unwrap();
-        let a = FiniteField::new(BigUint::from_str("40952").unwrap(), prime.clone());
+        let a = PrimeField::new(BigUint::from_str("40952").unwrap(), prime.clone());
         let result = a.inverse();
-        let expected = FiniteField::new(BigUint::from_str("9498").unwrap(), prime);
+        let expected = PrimeField::new(BigUint::from_str("9498").unwrap(), prime);
         assert_eq!(result, expected);
     }
     
     #[test]
     fn test_division() {
         let prime = BigUint::from_str("65537").unwrap();
-        let a = FiniteField::new(BigUint::from_str("40952").unwrap(), prime.clone());
-        let b = FiniteField::new(BigUint::from_str("40286").unwrap(), prime.clone());
+        let a = PrimeField::new(BigUint::from_str("40952").unwrap(), prime.clone());
+        let b = PrimeField::new(BigUint::from_str("40286").unwrap(), prime.clone());
         let result = a / b;
-        let expected = FiniteField::new(BigUint::from_str("41712").unwrap(), prime);
+        let expected = PrimeField::new(BigUint::from_str("41712").unwrap(), prime);
         assert_eq!(result, expected);
     }  
 

@@ -1,13 +1,14 @@
 use sha2::{Sha256,Digest};
 use crate::secp256k1::Secp256k1;
 use num_bigint::{BigUint, RandomBits};
+use crate::point::ECCPoint;
 use crate::point::Point;
 use rand::Rng;
 
 pub struct Ecdsa {
     pub e: Secp256k1,
     pub d: BigUint,
-    pub_key: Point,
+    pub_key: ECCPoint,
 }
 
 impl Ecdsa {
@@ -72,3 +73,4 @@ mod tests {
         assert!(ecdsa.verify(m, r, s));
     }
 }
+
