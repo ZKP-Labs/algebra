@@ -2,9 +2,9 @@ use num_bigint::{BigInt, BigUint};
 use num_traits::{One, Zero};
 
 /// Extended Euclidean Algorithm
-/// 
+///
 /// input: a, b
-/// 
+///
 /// output: (gcd, x, y) such that ax + by = gcd(a, b)
 pub fn extended_euclidean_algorithm(a: BigInt, b: BigInt) -> (BigInt, BigInt, BigInt) {
     if b == BigInt::zero() {
@@ -18,9 +18,9 @@ pub fn extended_euclidean_algorithm(a: BigInt, b: BigInt) -> (BigInt, BigInt, Bi
 }
 
 /// Legendre symbol
-/// 
+///
 /// return 1 if x is a quadratic residue modulo p
-/// 
+///
 /// return -1 if x is a non-quadratic residue modulo p
 pub fn legendre_symbol(x: BigUint, p: BigUint) -> BigInt {
     let result = x.modpow(&((p.clone() - BigUint::one()) / BigUint::from(2_u32)), &p);
@@ -31,9 +31,8 @@ pub fn legendre_symbol(x: BigUint, p: BigUint) -> BigInt {
     }
 }
 
-
 /// Square root modulo p
-/// 
+///
 /// just use for p = 3 mod 4 (example: sec256k1)
 pub fn sqrt_root(x: BigUint, p: BigUint) -> BigUint {
     if legendre_symbol(x.clone(), p.clone()) == BigInt::from(-1_i32) {
@@ -43,16 +42,15 @@ pub fn sqrt_root(x: BigUint, p: BigUint) -> BigUint {
     if p.clone() % BigUint::from(4_u32) == BigUint::from(1_u32) {
         panic!("this funtion only use for p = 3 mod 4");
     }
-    
+
     let p1 = (p.clone() + BigUint::one()) / BigUint::from(4_u32);
     x.modpow(&p1, &p)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     pub fn test_extended_euclidean_algorithm() {
         let a = BigInt::from(240_u32);
@@ -80,5 +78,4 @@ mod tests {
         let result = sqrt_root(x, p);
         assert_eq!(result, BigUint::from(6_u32));
     }
-
 }
