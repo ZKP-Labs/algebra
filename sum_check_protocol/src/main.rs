@@ -1,7 +1,7 @@
 use ark_ff::Field;
 use ark_poly::{
     multivariate::{SparsePolynomial, SparseTerm},
-    DenseMVPolynomial, Polynomial,
+    DenseMVPolynomial,
 };
 pub mod helper;
 pub mod prover;
