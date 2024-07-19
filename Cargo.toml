@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "elliptic_curve",
+    "finite_field",
+]
+
+exclude = []
+resolver = "2"
