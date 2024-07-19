@@ -118,56 +118,7 @@ impl Add for ECCPoint {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        if self.a != rhs.a || self.b != rhs.b {
-            panic!("not in the same curve")
-        }
-
-        match (&self.x, &self.y, rhs.x.as_ref(), rhs.y.as_ref()) {
-            (None, None, _, _) => rhs.clone(),
-            (_, _, None, None) => self,
-            (Some(x1), Some(y1), Some(x2), Some(y2)) if x1 == x2 && y1 != y2 => Self {
-                x: None,
-                y: None,
-                a: self.a,
-                b: self.b,
-            },
-            (Some(x1), Some(y1), Some(_), Some(_)) if self == rhs => {
-                let prime = &self.a.prime;
-                let big3 = FF::new(BigUint::from(3_u32), prime.clone());
-                let big2 = FF::new(BigUint::from(2_u32), prime.clone());
-
-                let doub_y1 = big2 * y1;
-                let sqrt_x1 = x1.pow(2);
-
-                let a = &self.a;
-                let lamda = (big3 * sqrt_x1 + a) / (doub_y1);
-
-                let x3 = lamda.pow(2) - x1 - x1;
-                let y3 = lamda * (x1.clone() - &x3) - y1;
-
-                Self {
-                    x: Some(x3),
-                    y: Some(y3),
-                    a: self.a.clone(),
-                    b: self.b.clone(),
-                }
-            }
-            (Some(x1), Some(y1), Some(x2), Some(y2)) => {
-                let t1 = y2.clone() - y1;
-                let t2 = x2.clone() - x1;
-
-                let lamda = t1 / t2;
-                let x3 = lamda.pow(2) - x1 - x2;
-                let y3 = lamda * (x1.clone() - &x3) - y1;
-                Self {
-                    x: Some(x3),
-                    y: Some(y3),
-                    a: self.a.clone(),
-                    b: self.b.clone(),
-                }
-            }
-            _ => panic!("Invalid point"),
-        }
+        self + &rhs
     }
 }
 

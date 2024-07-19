@@ -89,14 +89,7 @@ impl PartialEq for PrimeField {
 impl Add for PrimeField {
     type Output = Self;
     fn add(self, other: Self) -> Self::Output {
-        if self.prime != other.prime {
-            panic!("Can not add two numbers in different Fields");
-        }
-        let num = self.modulo(&(self.num.clone() + other.num));
-        Self {
-            num,
-            prime: self.prime.clone(),
-        }
+        self + &other
     }
 }
 
@@ -104,42 +97,14 @@ impl Sub for PrimeField {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self::Output {
-        if self.prime != other.prime {
-            panic!("Cannot subtract to numbers in different fields");
-        }
-
-        let result = BigInt::from(self.num.clone()) - BigInt::from(other.num.clone());
-
-        if result < BigInt::zero() {
-            let new_num = result + BigInt::from(self.prime.clone());
-            Self {
-                num: new_num
-                    .to_biguint()
-                    .expect("Can not convert your input to BigUint"),
-                prime: self.prime.clone(),
-            }
-        } else {
-            Self {
-                num: result
-                    .to_biguint()
-                    .expect("Can not convert your input to BigUint"),
-                prime: self.prime.clone(),
-            }
-        }
+        self - &other
     }
 }
 
 impl Mul for PrimeField {
     type Output = Self;
     fn mul(self, other: Self) -> Self::Output {
-        if self.prime != other.prime {
-            panic!("Can not multiply two numer is difference Fields");
-        }
-        let num = self.modulo(&(self.num.clone() * other.num.clone()));
-        Self {
-            num,
-            prime: self.prime.clone(),
-        }
+        self * &other
     }
 }
 
@@ -147,12 +112,7 @@ impl Div for PrimeField {
     type Output = Self;
 
     fn div(self, other: Self) -> Self::Output {
-        if self.prime != other.prime {
-            panic!("Can not divide two numer is difference Fields");
-        }
-
-        let other_inv = other.inverse();
-        self * other_inv
+        self / &other
     }
 }
 
