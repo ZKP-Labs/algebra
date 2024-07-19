@@ -48,11 +48,6 @@ pub fn sumcheck_protocol<F: Field>(
         r_i = v.random_r();
         v.rs.push(r_i);
     }
-    // println!("{}", p.g.evaluate(&v.rs));
-    // println!(
-    //     "{}",
-    //     v.evaluate_si_at_r(&v.g_part[num_rounds - 1], v.rs[num_rounds - 1])
-    // );
 
     true
 }
@@ -93,14 +88,3 @@ mod tests {
         assert!(sumcheck_protocol(&prover, verifier));
     }
 }
-
-/*
-Today:18- 07-2024
-* complete implementation of sumcheck protocol
-* a half of "SNARKs based on Linear PCP"
-Tomorrow:
-* continue on "SNARKs based on Linear PCP"
-* try to implement other zkp protocols
-* learn more about rust
-
-*/
