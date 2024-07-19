@@ -1,7 +1,7 @@
 use crate::ff::FiniteField;
 use crate::helper::extended_euclidean_algorithm;
 use core::fmt;
-use num_bigint::{BigInt, BigUint};
+use num_bigint::{BigInt, BigUint, ToBigInt};
 use num_traits::{One, Zero};
 use std::ops::{Add, Div, Mul, Sub};
 
@@ -50,22 +50,26 @@ impl FiniteField for PrimeField {
     }
 
     fn inverse(&self) -> Self {
-        let a = BigInt::from(self.num.clone());
-        let b = BigInt::from(self.prime.clone());
+        let a = self.num.to_bigint().unwrap();
+        let b = self.prime.to_bigint().unwrap();
         let (gcd, num, _) = extended_euclidean_algorithm(a, b);
 
         if gcd != BigInt::one() {
             panic!("base is not invertible for the given modulus");
         }
         if num < BigInt::zero() {
-            let num = num + BigInt::from(self.prime.clone());
+            let num = num + self.prime.to_bigint().unwrap();
             Self {
-                num: num.to_biguint().expect("err"),
+                num: num
+                    .to_biguint()
+                    .expect("Can not convert your input to BigUint"),
                 prime: self.prime.clone(),
             }
         } else {
             Self {
-                num: num.to_biguint().expect("err"),
+                num: num
+                    .to_biguint()
+                    .expect("Can not convert your input to BigUint"),
                 prime: self.prime.clone(),
             }
         }
@@ -101,7 +105,7 @@ impl Sub for PrimeField {
 
     fn sub(self, other: Self) -> Self::Output {
         if self.prime != other.prime {
-            panic!("Can not sub two numer is difference Fields");
+            panic!("Cannot subtract to numbers in different fields");
         }
 
         let result = BigInt::from(self.num.clone()) - BigInt::from(other.num.clone());
@@ -109,12 +113,16 @@ impl Sub for PrimeField {
         if result < BigInt::zero() {
             let new_num = result + BigInt::from(self.prime.clone());
             Self {
-                num: new_num.to_biguint().expect("err"),
+                num: new_num
+                    .to_biguint()
+                    .expect("Can not convert your input to BigUint"),
                 prime: self.prime.clone(),
             }
         } else {
             Self {
-                num: result.to_biguint().expect("err"),
+                num: result
+                    .to_biguint()
+                    .expect("Can not convert your input to BigUint"),
                 prime: self.prime.clone(),
             }
         }
@@ -125,7 +133,7 @@ impl Mul for PrimeField {
     type Output = Self;
     fn mul(self, other: Self) -> Self::Output {
         if self.prime != other.prime {
-            panic!("Can not mul two numer is difference Fields");
+            panic!("Can not multiply two numer is difference Fields");
         }
         let num = self.modulo(&(self.num.clone() * other.num.clone()));
         Self {
@@ -140,7 +148,7 @@ impl Div for PrimeField {
 
     fn div(self, other: Self) -> Self::Output {
         if self.prime != other.prime {
-            panic!("Can not div two numer is difference Fields");
+            panic!("Can not divide two numer is difference Fields");
         }
 
         let other_inv = other.inverse();
@@ -192,12 +200,16 @@ impl<'a> Sub<&'a Self> for PrimeField {
         if result < BigInt::zero() {
             let new_num = result + BigInt::from(self.prime.clone());
             Self {
-                num: new_num.to_biguint().expect("err"),
+                num: new_num
+                    .to_biguint()
+                    .expect("Can not convert your input to BigUint"),
                 prime: self.prime.clone(),
             }
         } else {
             Self {
-                num: result.to_biguint().expect("err"),
+                num: result
+                    .to_biguint()
+                    .expect("Can not convert your input to BigUint"),
                 prime: self.prime.clone(),
             }
         }

@@ -5,11 +5,10 @@ use num_traits::{One, Zero};
 use std::ops::Add;
 
 pub type PointData = (Option<FF>, Option<FF>, FF, FF);
-pub trait Point: Sized + PartialEq + Add<Self, Output = Self>
-// + for<'a> Add<&'a Self, Output = Self>
+pub trait Point:
+    Sized + PartialEq + Add<Self, Output = Self> + for<'a> Add<&'a Self, Output = Self>
 {
     /// create a new point
-    // fn new(x: Option<FF>, y: Option<FF>, a: FF, b: FF) -> Self;
     fn new(point: &PointData) -> Self;
 
     /// return x
@@ -123,63 +122,51 @@ impl Add for ECCPoint {
             panic!("not in the same curve")
         }
 
-        if self.x.is_none() && self.y.is_none() {
-            return rhs;
-        }
-
-        if rhs.x.is_none() && rhs.y.is_none() {
-            return self;
-        }
-
-        if self.x == rhs.x && self.y != rhs.y {
-            return Self {
+        match (&self.x, &self.y, rhs.x.as_ref(), rhs.y.as_ref()) {
+            (None, None, _, _) => rhs.clone(),
+            (_, _, None, None) => self,
+            (Some(x1), Some(y1), Some(x2), Some(y2)) if x1 == x2 && y1 != y2 => Self {
                 x: None,
                 y: None,
                 a: self.a,
                 b: self.b,
-            };
-        }
+            },
+            (Some(x1), Some(y1), Some(_), Some(_)) if self == rhs => {
+                let prime = &self.a.prime;
+                let big3 = FF::new(BigUint::from(3_u32), prime.clone());
+                let big2 = FF::new(BigUint::from(2_u32), prime.clone());
 
-        let (x1, y1, x2, y2) = (
-            &self.x.clone().unwrap(),
-            &self.y.clone().unwrap(),
-            &rhs.x.clone().unwrap(),
-            &rhs.y.clone().unwrap(),
-        );
+                let doub_y1 = big2 * y1;
+                let sqrt_x1 = x1.pow(2);
 
-        if self == rhs {
-            let prime = &self.a.prime;
-            let big3 = FF::new(BigUint::from(3_u32), prime.clone());
-            let big2 = FF::new(BigUint::from(2_u32), prime.clone());
+                let a = &self.a;
+                let lamda = (big3 * sqrt_x1 + a) / (doub_y1);
 
-            let doub_y1 = big2 * y1;
-            let sqrt_x1 = x1.pow(2);
+                let x3 = lamda.pow(2) - x1 - x1;
+                let y3 = lamda * (x1.clone() - &x3) - y1;
 
-            let a = &self.a;
-            let lamda = (big3 * sqrt_x1 + a) / (doub_y1);
+                Self {
+                    x: Some(x3),
+                    y: Some(y3),
+                    a: self.a.clone(),
+                    b: self.b.clone(),
+                }
+            }
+            (Some(x1), Some(y1), Some(x2), Some(y2)) => {
+                let t1 = y2.clone() - y1;
+                let t2 = x2.clone() - x1;
 
-            let x3 = lamda.pow(2) - x1 - x1.clone();
-            let y3 = lamda * (x1.clone() - x3.clone()) - y1;
-
-            return Self {
-                x: Some(x3),
-                y: Some(y3),
-                a: self.a.clone(),
-                b: self.b.clone(),
-            };
-        }
-
-        let t1 = y2.clone() - y1.clone();
-        let t2 = x2.clone() - x1.clone();
-
-        let lamda = t1 / t2;
-        let x3 = lamda.pow(2) - x1 - x2;
-        let y3 = lamda.clone() * (x1.clone() - x3.clone()) - y1.clone();
-        Self {
-            x: Some(x3),
-            y: Some(y3),
-            a: self.a.clone(),
-            b: self.b.clone(),
+                let lamda = t1 / t2;
+                let x3 = lamda.pow(2) - x1 - x2;
+                let y3 = lamda * (x1.clone() - &x3) - y1;
+                Self {
+                    x: Some(x3),
+                    y: Some(y3),
+                    a: self.a.clone(),
+                    b: self.b.clone(),
+                }
+            }
+            _ => panic!("Invalid point"),
         }
     }
 }
@@ -192,63 +179,51 @@ impl<'a> Add<&'a Self> for ECCPoint {
             panic!("not in the same curve")
         }
 
-        if self.x.is_none() && self.y.is_none() {
-            return rhs.clone();
-        }
-
-        if rhs.x.is_none() && rhs.y.is_none() {
-            return self;
-        }
-
-        if self.x == rhs.x && self.y != rhs.y {
-            return Self {
+        match (&self.x, &self.y, rhs.x.as_ref(), rhs.y.as_ref()) {
+            (None, None, _, _) => rhs.clone(),
+            (_, _, None, None) => self,
+            (Some(x1), Some(y1), Some(x2), Some(y2)) if x1 == x2 && y1 != y2 => Self {
                 x: None,
                 y: None,
                 a: self.a,
                 b: self.b,
-            };
-        }
+            },
+            (Some(x1), Some(y1), Some(_), Some(_)) if &self == rhs => {
+                let prime = &self.a.prime;
+                let big3 = FF::new(BigUint::from(3_u32), prime.clone());
+                let big2 = FF::new(BigUint::from(2_u32), prime.clone());
 
-        let (x1, y1, x2, y2) = (
-            &self.x.clone().unwrap(),
-            &self.y.clone().unwrap(),
-            &rhs.x.clone().unwrap(),
-            &rhs.y.clone().unwrap(),
-        );
+                let doub_y1 = big2 * y1;
+                let sqrt_x1 = x1.pow(2);
 
-        if &self == rhs {
-            let prime = &self.a.prime;
-            let big3 = FF::new(BigUint::from(3_u32), prime.clone());
-            let big2 = FF::new(BigUint::from(2_u32), prime.clone());
+                let a = &self.a;
+                let lamda = (big3 * sqrt_x1 + a) / (doub_y1);
 
-            let doub_y1 = big2 * y1;
-            let sqrt_x1 = x1.pow(2);
+                let x3 = lamda.pow(2) - x1 - x1;
+                let y3 = lamda * (x1.clone() - &x3) - y1;
 
-            let a = &self.a;
-            let lamda = (big3 * sqrt_x1 + a) / (doub_y1);
+                Self {
+                    x: Some(x3),
+                    y: Some(y3),
+                    a: self.a.clone(),
+                    b: self.b.clone(),
+                }
+            }
+            (Some(x1), Some(y1), Some(x2), Some(y2)) => {
+                let t1 = y2.clone() - y1;
+                let t2 = x2.clone() - x1;
 
-            let x3 = lamda.pow(2) - x1 - x1.clone();
-            let y3 = lamda * (x1.clone() - x3.clone()) - y1;
-
-            return Self {
-                x: Some(x3),
-                y: Some(y3),
-                a: self.a.clone(),
-                b: self.b.clone(),
-            };
-        }
-
-        let t1 = y2.clone() - y1.clone();
-        let t2 = x2.clone() - x1.clone();
-
-        let lamda = t1 / t2;
-        let x3 = lamda.pow(2) - x1 - x2;
-        let y3 = lamda.clone() * (x1.clone() - x3.clone()) - y1.clone();
-        Self {
-            x: Some(x3),
-            y: Some(y3),
-            a: self.a.clone(),
-            b: self.b.clone(),
+                let lamda = t1 / t2;
+                let x3 = lamda.pow(2) - x1 - x2;
+                let y3 = lamda * (x1.clone() - &x3) - y1;
+                Self {
+                    x: Some(x3),
+                    y: Some(y3),
+                    a: self.a.clone(),
+                    b: self.b.clone(),
+                }
+            }
+            _ => panic!("Invalid point"),
         }
     }
 }
@@ -281,10 +256,10 @@ mod tests {
         let gy = FF::new(y, p.clone());
 
         let k = ECCPoint::new(&(Some(gx.clone()), Some(gy.clone()), a.clone(), b.clone()));
-        let k1 = ECCPoint::new(&(Some(gx.clone()), Some(gy.clone()), a.clone(), b.clone()));
+        let k1 = ECCPoint::new(&(Some(gx), Some(gy), a, b));
         assert_eq!(
             k.clone().y.unwrap().pow(2),
-            k.clone().x.unwrap().pow(3) + k.b.clone()
+            k.clone().x.unwrap().pow(3) + &k.b
         );
 
         assert_eq!(k.clone(), k1);
@@ -344,8 +319,10 @@ mod tests {
         let rs = ECCPoint::new(&rs);
 
         let infinite = ECCPoint::new_infinity_point(a.clone(), b.clone());
+        assert_eq!(pp.clone() + &infinite, pp.clone());
+        assert_eq!(pp.clone() + &pp.clone() + q.clone(), rs);
         assert_eq!(pp.clone() + infinite, pp.clone());
-        assert_eq!(pp.clone() + pp.clone() + q, rs);
+        assert_eq!(pp.clone() + pp + q, rs);
     }
 
     #[test]
@@ -386,8 +363,8 @@ mod tests {
         .unwrap();
 
         let x = FF::new(x, p.clone());
-        let y = FF::new(y, p.clone());
-        let rs: PointData = (Some(x), Some(y), a.clone(), b.clone());
+        let y = FF::new(y, p);
+        let rs: PointData = (Some(x), Some(y), a, b);
         let rs = ECCPoint::new(&rs);
 
         assert_eq!(pp.scalar_mul(n), rs);

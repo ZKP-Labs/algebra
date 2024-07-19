@@ -39,11 +39,10 @@ pub fn sqrt_root(x: BigUint, p: BigUint) -> BigUint {
         panic!("No square root modulo p");
     }
 
-    if p.clone() % BigUint::from(4_u32) == BigUint::from(1_u32) {
+    if &p % BigUint::from(4_u32) == BigUint::from(1_u32) {
         panic!("this funtion only use for p = 3 mod 4");
     }
-
-    let p1 = (p.clone() + BigUint::one()) / BigUint::from(4_u32);
+    let p1 = (&p + BigUint::one()) / BigUint::from(4_u32);
     x.modpow(&p1, &p)
 }
 
@@ -62,12 +61,12 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
     pub fn test_sqrt_root_fail() {
         let x = BigUint::from(4_u32);
         // p = 13 = 1 mod 4 => cannot find square root by this function
         let p = BigUint::from(13_u32);
-        let result = sqrt_root(x, p);
-        assert_eq!(result, BigUint::from(3_u32));
+        sqrt_root(x, p);
     }
 
     #[test]
