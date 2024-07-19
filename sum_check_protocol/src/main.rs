@@ -1,7 +1,7 @@
 use ark_ff::Field;
 use ark_poly::{
     multivariate::{SparsePolynomial, SparseTerm},
-    DenseMVPolynomial,
+    DenseMVPolynomial, Polynomial,
 };
 pub mod helper;
 pub mod prover;
@@ -10,6 +10,7 @@ pub use helper::*;
 pub use prover::*;
 pub use verifier::*;
 
+/// demo of sumcheck protocol
 pub fn sumcheck_protocol<F: Field>(
     p: &Prover<F, SparsePolynomial<F, SparseTerm>>,
     mut v: Verifier<F, SparsePolynomial<F, SparseTerm>>,

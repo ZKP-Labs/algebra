@@ -5,11 +5,8 @@ use ark_poly::polynomial::multivariate::{SparsePolynomial, SparseTerm};
 use ark_poly::DenseMVPolynomial;
 use rand::Rng;
 
-pub fn get_variable_degree<F, P>(g: &P, variable: usize) -> usize
-where
-    F: Field,
-    P: DenseMVPolynomial<F>,
-{
+/// Get the degree of a variable in a polynomial
+pub fn get_deg_of_var<F: Field, P: DenseMVPolynomial<F>>(g: &P, variable: usize) -> usize {
     let mut max = 0_usize;
     for (_c, t) in g.terms().iter() {
         for (&var, pow) in t.vars().iter().zip(t.powers()) {
