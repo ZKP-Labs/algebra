@@ -87,16 +87,3 @@ mod tests {
         assert!(sumcheck_protocol(&prover, verifier));
     }
 }
-
-/*
-Today: 19-07-2024
-* fix and optimize algebra project
-* complete "Linear Probabilistically Checkable Proofs (PCP)"
-* write readme for algebra project (70%)
-Tomorrow:
-* start "Recursive SNARKs, Aggregation and Accumulation"
-* implement other zkp protocols
-* write readme for algebra project
-
-
-*/
