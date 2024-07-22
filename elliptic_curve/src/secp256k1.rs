@@ -22,6 +22,8 @@ impl Default for Secp256k1 {
     }
 }
 
+/// secp256k1 curve which is used in bitcoin
+/// https://en.bitcoin.it/wiki/Secp256k1
 impl Secp256k1 {
     /// Create a new secp256k1 curve
     pub fn new() -> Self {

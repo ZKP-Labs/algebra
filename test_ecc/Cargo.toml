@@ -1,9 +1,0 @@
-[package]
-name = "test_ecc"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-elliptic_curve = { path = "../elliptic_curve" }
-num-bigint = { version = "0.4.3", features = ["rand"] }
-num-traits = "0.2.16"

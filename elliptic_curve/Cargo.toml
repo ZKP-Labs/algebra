@@ -3,6 +3,10 @@ name = "elliptic_curve"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "elliptic_curve"
+path = "src/lib.rs"
+
 [dependencies]
 finite_field = { path = "../finite_field" }
 num-bigint = { version = "0.4.3", features = ["rand"] }

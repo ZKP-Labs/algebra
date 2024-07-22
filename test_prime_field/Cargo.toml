@@ -1,8 +1,0 @@
-[package]
-name = "test_prime_field"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-finite_field = { path = "../finite_field" }
-num-bigint = { version = "0.4.3", features = ["rand"] }

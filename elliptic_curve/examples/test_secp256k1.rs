@@ -10,10 +10,10 @@ fn main() {
     //Get the Generator Point:
     println!("Generator Point:");
     let g = secp256k1.g();
-    println!("Generator Point: {:?}", g);
+    println!("{:?}", g);
 
     //Create a Custom Point:
-    print!("Custom Point: ");
+    println!("Custom Point: ");
     let x = BigUint::from_str_radix(
         "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",
         16,
@@ -25,7 +25,7 @@ fn main() {
     )
     .unwrap();
     let point = secp256k1.point(x, y);
-    println!("Custom Point: {:?}", point);
+    println!("{:?}", point);
 
     //Lift an X Coordinate to a Point:
     println!("Lifted Point:");
@@ -36,5 +36,5 @@ fn main() {
     )
     .unwrap();
     let point = secp256k1.lift_x(&x);
-    println!("Lifted Point: {:?}", point);
+    println!("{:?}", point);
 }
