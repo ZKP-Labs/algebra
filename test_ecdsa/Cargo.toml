@@ -1,0 +1,9 @@
+[package]
+name = "test_ecdsa"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+elliptic_curve = { path = "../elliptic_curve" }
+rand = "0.8.5"
+num-bigint = { version = "0.4.3", features = ["rand"] }

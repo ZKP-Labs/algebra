@@ -54,9 +54,7 @@ pub fn sumcheck_protocol<F: Field>(
 }
 
 fn main() {
-    // let g = random_poly();
     let g = random_poly();
-    // println!("poly g: {:?}", g);
     let prover = Prover::new(&g).unwrap();
     let verifier = Verifier::new(&g);
     assert!(sumcheck_protocol(&prover, verifier));
@@ -89,3 +87,16 @@ mod tests {
         assert!(sumcheck_protocol(&prover, verifier));
     }
 }
+
+/*
+Today: 19-07-2024
+* fix and optimize algebra project
+* complete "Linear Probabilistically Checkable Proofs (PCP)"
+* write readme for algebra project (70%)
+Tomorrow:
+* start "Recursive SNARKs, Aggregation and Accumulation"
+* implement other zkp protocols
+* write readme for algebra project
+
+
+*/

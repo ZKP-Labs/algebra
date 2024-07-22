@@ -1,11 +1,9 @@
 [package]
-name = "elliptic_curve"
+name = "test_ecc"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-finite_field = { path = "../finite_field" }
+elliptic_curve = { path = "../elliptic_curve" }
 num-bigint = { version = "0.4.3", features = ["rand"] }
 num-traits = "0.2.16"
-sha2 = "0.10.8"
-rand = "0.8.5"

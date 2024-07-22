@@ -1,5 +1,11 @@
 [workspace]
-members = ["elliptic_curve", "finite_field", "sum_check_protocol"]
+members = [
+    "elliptic_curve",
+    "finite_field",
+    "test_prime_field",
+    "sum_check_protocol",
+    "test_ecdsa", "test_ecc",
+]
 
 exclude = []
 resolver = "2"
