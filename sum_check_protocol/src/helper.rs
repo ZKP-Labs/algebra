@@ -6,7 +6,7 @@ use ark_poly::DenseMVPolynomial;
 use rand::Rng;
 
 /// Get the degree of a variable in a polynomial
-pub fn get_deg_of_var<F: Field, P: DenseMVPolynomial<F>>(g: &P, variable: usize) -> usize {
+pub fn deg_j<F: Field, P: DenseMVPolynomial<F>>(g: &P, variable: usize) -> usize {
     let mut max = 0_usize;
     for (_c, t) in g.terms().iter() {
         for (&var, pow) in t.vars().iter().zip(t.powers()) {

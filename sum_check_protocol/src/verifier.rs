@@ -1,4 +1,4 @@
-use crate::helper::get_deg_of_var;
+use crate::helper::deg_j;
 use ark_ff::Field;
 use ark_poly::{univariate::DensePolynomial, DenseMVPolynomial, Polynomial};
 use rand::Rng;
@@ -34,7 +34,7 @@ impl<F: Field, P: DenseMVPolynomial<F>> Verifier<F, P> {
         s_i.evaluate(&r)
     }
 
-    /// check if s_j_1(r) = s_j(0) + s_j(1)
+    /// check if s_{j-1}(r_{j-1}) = s_j(0) + s_j(1)
     pub fn check_round(&self, s_j: &DensePolynomial<F>, s_j_1_at_r: F, round: usize) -> bool {
         let s_j_0 = s_j.evaluate(&F::zero());
         let s_j_1 = s_j.evaluate(&F::one());
@@ -44,7 +44,7 @@ impl<F: Field, P: DenseMVPolynomial<F>> Verifier<F, P> {
         }
 
         // check if deg(g_j) = deg(g(r0, r1, ..., X_j, ..., b_l))
-        let deg_g = get_deg_of_var(&self.g, round);
+        let deg_g = deg_j(&self.g, round);
         let deg_g_j = s_j.degree();
 
         if deg_g_j > deg_g {

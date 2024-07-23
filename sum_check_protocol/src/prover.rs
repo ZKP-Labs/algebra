@@ -17,11 +17,11 @@ where
 {
     /// caculate claimed answer of sumcheck protocol
     pub fn calculate_c_1(g: &SparsePolynomial<F, SparseTerm>) -> F {
-        let v = g.num_vars();
-        let mut sum = F::zero();
+        let l = g.num_vars();
+        let mut c_1 = F::zero();
 
-        for i in 0..(1 << v) {
-            let point: Vec<F> = (0..v)
+        for i in 0..(1 << l) {
+            let point: Vec<F> = (0..l)
                 .map(|d| {
                     if (i >> d) & 1 == 1 {
                         F::one()
@@ -31,9 +31,9 @@ where
                 })
                 .collect();
 
-            sum += &g.evaluate(&point);
+            c_1 += &g.evaluate(&point);
         }
-        sum
+        c_1
     }
 
     /// learn from: https://github.com/punwai/sumcheck/blob/main/src/main.rs
@@ -44,9 +44,9 @@ where
         round: usize,
     ) -> DensePolynomial<F> {
         let mut coeffs = vec![F::zero(); g.degree() + 1];
-        let v: usize = g.num_vars();
+        let l: usize = g.num_vars();
 
-        let rest = v - round - 1;
+        let rest = l - round - 1;
         for i in 0..(1 << rest) {
             let mut inputs: Vec<F> = vec![];
 

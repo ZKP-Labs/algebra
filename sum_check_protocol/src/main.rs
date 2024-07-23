@@ -1,7 +1,7 @@
 use ark_ff::Field;
 use ark_poly::{
     multivariate::{SparsePolynomial, SparseTerm},
-    DenseMVPolynomial,
+    DenseMVPolynomial, Polynomial,
 };
 pub mod helper;
 pub mod prover;
@@ -15,7 +15,7 @@ pub fn sumcheck_protocol<F: Field>(
     p: &Prover<F, SparsePolynomial<F, SparseTerm>>,
     mut v: Verifier<F, SparsePolynomial<F, SparseTerm>>,
 ) -> bool {
-    let num_rounds = p.g.num_vars();
+    let l = p.g.num_vars();
 
     //first round
     let c_1 = p.c_1;
@@ -30,8 +30,8 @@ pub fn sumcheck_protocol<F: Field>(
     let mut r_i = v.random_r();
     v.rs.push(r_i);
 
-    //other rounds
-    for round in 1..num_rounds {
+    // other rounds
+    for round in 1..l {
         // calculate s_{j-1} at r
         let s_j_1_at_r = v.evaluate_si_at_r(&v.g_part[round - 1], v.rs[round - 1]);
 
@@ -48,6 +48,12 @@ pub fn sumcheck_protocol<F: Field>(
         // random r for next round
         r_i = v.random_r();
         v.rs.push(r_i);
+    }
+
+    // final part
+    let s_l_value = v.evaluate_si_at_r(&v.g_part[l - 1], v.rs[l - 1]);
+    if v.g.evaluate(&v.rs) != s_l_value {
+        panic!("Fail at last round");
     }
 
     true

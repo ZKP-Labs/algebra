@@ -179,3 +179,7 @@ To ensure that your implementation is correct, you can run the tests defined in 
 ```
 cargo test
 ```
+
+# SUM CHECK PROTOCOL
+
+about sum check protocol in [here](https://github.com/nguyen-xuan-quoc/algebra/tree/feature/sum_check_protocol/sum_check_protocol/README.md)
