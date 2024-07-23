@@ -123,7 +123,7 @@ let prover = Prover::new(&g).unwrap();
 let verifier = Verifier::new(&g);
 ```
 
-### Round $j$th (1 < $j$ < $l$):
+### Round $j$ th (1 < $j$ < $l$):
 
 $P$ send univariate polynomial $s_j(X_J)$ clamed to equal :
 
