@@ -14,7 +14,7 @@ $$
 
 First we need funtion to generate multilvariate polynomial:
 
-Code to generate a random $10-$variate polynomial
+Code to generate a random $10-variate$ polynomial
 
 ```rust
 /// Generate a random polynomial
@@ -73,13 +73,11 @@ $$
 
 V check that $C_1 = s_1(0) + s_1(1)$. If this check passes, it is safe for $V$ to believe that $C_1$ is the correct answer, so long as $V$ belives that $s_1 = H_1$
 
-How to check this? Just check that $s_1$ and $H_1$ agree at a random point $r_1$. That mean, V choose random elemrnt $r_1$ and send $r_1$ to P
-
-V can compute $s_1(r_1)$ directly from $P’s$ first message.
+How to check this? Just check that $s_1$ and $H_1$ agree at a random point $r_1$. That mean, V chooses random element $r_1$ and send $r_1$ to P. V can compute $s_1(r_1)$ directly from $P’s$ first message.
 
 > $s_1$ is a univariate polynomial of degree at most $deg_1(g)$, rejecting if not. Here, $deg_j(g)$
 >
-> denotes the degree of $g(X_1,...,X_v)$ in variable $X_j$
+> Denotes the degree of $g(X_1,...,X_v)$ in variable $X_j$
 
 To implement this in Rust, first define the `Prover` and `Verifier` structs:
 
@@ -98,7 +96,7 @@ pub struct Verifier<F: Field, P: DenseMVPolynomial<F>> {
 }
 ```
 
-then, we $Prover$ need to compute $C_1$ which clamed to equal value $H$
+then, we $Prover$ compute $C_1$ which clamed to equal value $H$
 
 ```rust
 
@@ -131,7 +129,7 @@ $$
 \sum_{b_{j+1} \in \{0, 1\}} ... \sum_{b_l \in \{0, 1\}} g(r_{1},...,r_{j-1},X_j,b_{j+1}, ..., b_l)
 $$
 
-To do that, honest $Prover$ need to covert Multivariate polynomials $g(b_1, b_2, …, b_l)$ to univariate polynomial $s_j(X_j)$. This process can be complex to implement in Rust. Fortunately, I have learned from https://github.com/punwai/sumcheck/blob/main/src/main.rs and made some modifications.
+To achieve this, honest $Prover$ needs to covert Multivariate polynomials $g(b_1, b_2, …, b_l)$ to univariate polynomial $s_j(X_j)$. This process can be complex to implement in Rust. Fortunately, I have learned from https://github.com/punwai/sumcheck/blob/main/src/main.rs and made some modifications.
 
 ```rust
 /// learn from: https://github.com/punwai/sumcheck/blob/main/src/main.rs
@@ -223,7 +221,7 @@ $$
 
 $V$ checks that $s_{l-1}(r_l - 1) = s_l(0) + s_l(1)$
 
-$V$ pick $r_l$ at random, and needs to check that $s_l(r_l) = g(r_1,…, r_l)$, rejecting if not.
+$V$ picks $r_l$ at random, and needs to check that $s_l(r_l) = g(r_1,…, r_l)$, rejecting if not.
 
 If $V$ has not yet rejected, $V$ halts and accepts
 
@@ -248,7 +246,7 @@ Let $g = (x_1 + 2)(x_2 + x_3) + x_1x_3$
 **Round 3:**
 
 - The honest prover would respond with the univariate polynomial $s_3 = g(r_1, r_2, X_3) = 8x_3 + 20$
-- Verifier confirm that $s_2(r_2) = s_3(0) + s_3(1) \ (48 = 20 + 28)$ . The verifier then sends the prover random field element $r_3$. Suppose that $r_3 = 7$.
+- Verifier confirms that $s_2(r_2) = s_3(0) + s_3(1) \ (48 = 20 + 28)$ . The verifier then sends the prover random field element $r_3$. Suppose that $r_3 = 7$.
 - Finally, the Verifier confirms that $s_3(r_3) = g(r_1, r_2, r_3)$ (76 = 76) by making one oracle query to $g$. If this is true, the sum-check protocol is valid!
 
 ### References
