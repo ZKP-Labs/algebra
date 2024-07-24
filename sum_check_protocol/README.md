@@ -104,9 +104,9 @@ impl<F> Prover<F, SparsePolynomial<F, SparseTerm>>
 where
     F: Field,
 {
-		pub fn calculate_c_1(g: &SparsePolynomial<F, SparseTerm>) -> F {
-				...
-		}
+    pub fn calculate_c_1(g: &SparsePolynomial<F, SparseTerm>) -> F {
+            ...
+    }
 
     pub fn new(g: &SparsePolynomial<F, SparseTerm>) -> Option<Self> {
         Some(Self {
