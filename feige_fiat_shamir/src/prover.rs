@@ -19,12 +19,7 @@ impl Prover {
     }
 
     pub fn gen_sign(&self) -> i32 {
-        let mut rng = rand::thread_rng();
-        match rng.gen_range(0..2) {
-            0 => -1,
-            1 => 1,
-            _ => panic!("Invalid sign"),
-        }
+        rand::thread_rng().gen_range(0..2) * 2 - 1
     }
 
     pub fn commit(&self) -> (BigUint, BigUint) {
