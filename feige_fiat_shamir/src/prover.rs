@@ -11,11 +11,10 @@ pub struct Prover {
 impl Prover {
     pub fn new(p: BigUint, q: BigUint, s: Vec<BigUint>) -> Self {
         let n = &p * &q;
-        let mut v: Vec<BigUint> = Vec::new();
-        for si in s.iter() {
-            let vi = si.modpow(&BigUint::from(2_u32), &n);
-            v.push(vi);
-        }
+        let v: Vec<BigUint> = s
+            .iter()
+            .map(|si| si.modpow(&BigUint::from(2_u32), &n))
+            .collect();
         Prover { n, s, v }
     }
 

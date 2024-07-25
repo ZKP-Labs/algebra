@@ -45,6 +45,8 @@ pub fn sumcheck_protocol<F: Field>(
             panic!("Fail ar round {}", round);
         }
 
+        println!("Round: {} passe!", round);
+
         // random r for next round
         r_i = v.random_r();
         v.rs.push(r_i);
@@ -64,7 +66,7 @@ fn main() {
     let prover = Prover::new(&g).unwrap();
     let verifier = Verifier::new(&g);
     assert!(sumcheck_protocol(&prover, verifier));
-    println!("sumcheck protocol pass");
+    println!("sumcheck protocol pass!");
 }
 
 #[cfg(test)]
