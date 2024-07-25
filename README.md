@@ -14,13 +14,6 @@ In this project, I focus on implementing a prime field and the arithmetic operat
 
 ### Usage
 
-Clone `finite_field` and config `Cargo.toml`
-
-```jsx
-[dependencies]
-finite_field = { path = "../finite_field" }
-```
-
 ### Prime Field Feature
 
 The Prime Field feature in this project allows for exploration and manipulation of elements within a prime field. Below are examples and explanations of how to use the various functionalities provided:
@@ -67,13 +60,6 @@ You can also run this example with `cargo run --example test_prime_field`
 ## Elliptic Curve and ECDSA
 
 In this project, I focus on implementing the secp256k1 elliptic curve. The implementation leverages my `finite_field` project to handle elements over finite fields with the prime modulus being the secp256k1 prime. This setup not only supports the secp256k1 curve but also allows for the extension to other elliptic curves based on the same foundational point structure.
-
-To use `elliptic_curve` package, you need to clone it and config `Cargo.toml`
-
-```rust
-[dependencies]
-elliptic_curve = { path = "../elliptic_curve" }
-```
 
 ### **Example Usage** secp256k1
 

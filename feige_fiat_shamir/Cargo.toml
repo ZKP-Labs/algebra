@@ -1,5 +1,5 @@
 [package]
-name = "fiat_shamir"
+name = "feige_fiat_shamir"
 version = "0.1.0"
 edition = "2021"
 

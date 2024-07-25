@@ -75,9 +75,9 @@ V check that $C_1 = s_1(0) + s_1(1)$. If this check passes, it is safe for $V$ t
 
 How to check this? Just check that $s_1$ and $H_1$ agree at a random point $r_1$. That mean, V chooses random element $r_1$ and send $r_1$ to P. V can compute $s_1(r_1)$ directly from $P’s$ first message.
 
-> $s_1$ is a univariate polynomial of degree at most $deg_1(g)$, rejecting if not. Here, $deg_j(g)$
+> $s_1$ is a univariate polynomial of degree at most $deg_1(g)$, rejecting if not.
 >
-> Denotes the degree of $g(X_1,...,X_v)$ in variable $X_j$
+> Here, $deg_j(g)$ denotes the degree of $g(X_1,...,X_v)$ in variable $X_j$
 
 To implement this in Rust, first define the `Prover` and `Verifier` structs:
 
@@ -231,7 +231,7 @@ By following this protocol, we ensure that the sum check protocol is executed co
 
 Let $g = (x_1 + 2)(x_2 + x_3) + x_1x_3$
 
-→ The sum of g’s evaluations over the Boolean hypercube is $H = 22$
+→ The sum of $g’s$ evaluations over the Boolean hypercube is $H = 22$
 
 **Round 1:**
 

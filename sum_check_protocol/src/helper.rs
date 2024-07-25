@@ -20,14 +20,26 @@ pub fn deg_j<F: Field, P: DenseMVPolynomial<F>>(g: &P, variable: usize) -> usize
 
 /// Generate a random polynomial
 pub fn random_poly() -> SparsePolynomial<Fq, SparseTerm> {
+    const NUM_TERMS: usize = 10;
+    const NUM_TUPLES_PER_TERM: usize = 10;
+    const MAX_RANDOM_VALUE: usize = 10;
+    const MAX_RANDOM_POWER: usize = 5;
     let mut rng = rand::thread_rng();
-    let mut terms = vec![];
-    for _ in 0..10 {
-        let mut term = vec![];
-        for _ in 0..10 {
-            term.push((rng.gen_range(0..10), rng.gen_range(0..5)));
-        }
-        terms.push((Fq::from(rng.gen_range(0..10)), SparseTerm::new(term)));
-    }
-    SparsePolynomial::from_coefficients_vec(10, terms)
+    let terms: Vec<(Fq, SparseTerm)> = (0..NUM_TERMS)
+        .map(|_| {
+            let term: Vec<(usize, usize)> = (0..NUM_TUPLES_PER_TERM)
+                .map(|_| {
+                    (
+                        rng.gen_range(0..MAX_RANDOM_VALUE),
+                        rng.gen_range(0..MAX_RANDOM_POWER),
+                    )
+                })
+                .collect();
+            (
+                Fq::from(rng.gen_range(0..MAX_RANDOM_VALUE as u32)),
+                SparseTerm::new(term),
+            )
+        })
+        .collect();
+    SparsePolynomial::from_coefficients_vec(NUM_TERMS, terms)
 }
