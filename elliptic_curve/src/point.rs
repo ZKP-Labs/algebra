@@ -5,6 +5,8 @@ use num_traits::{One, Zero};
 use std::ops::Add;
 
 pub type PointData = (Option<FF>, Option<FF>, FF, FF);
+
+/// Trait for point in elliptic curve
 pub trait Point:
     Sized + PartialEq + Add<Self, Output = Self> + for<'a> Add<&'a Self, Output = Self>
 {
@@ -53,6 +55,7 @@ impl Point for ECCPoint {
         }
     }
 
+    /// return x
     fn x(&self) -> FF {
         if self.x.is_none() {
             return self.a.to_zero();
@@ -60,6 +63,7 @@ impl Point for ECCPoint {
         self.x.clone().unwrap()
     }
 
+    /// return y
     fn y(&self) -> FF {
         if self.y.is_none() {
             return self.a.to_zero();
@@ -67,6 +71,7 @@ impl Point for ECCPoint {
         self.y.clone().unwrap()
     }
 
+    /// return (x, y)
     fn xy(&self) -> (FF, FF) {
         (self.x(), self.y())
     }

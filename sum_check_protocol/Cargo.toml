@@ -1,0 +1,14 @@
+[package]
+name = "sum_check_protocol"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ark-bls12-381 = "0.4.0"
+ark-ff = "0.4.2"
+rand = "0.8.5"
+ark-poly = "0.4.2"
+ark-ec = { version = "0.4.0", default-features = false }
+ark-std = { version = "0.4.0", default-features = false }
+ark-relations = { version = "0.4.0", default-features = false }
+ark-test-curves = { version = "0.4.0", default-features = false }

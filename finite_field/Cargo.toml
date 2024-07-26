@@ -3,6 +3,10 @@ name = "finite_field"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "finite_field"
+path = "src/lib.rs"
+
 [dependencies]
 num-bigint = "0.4.3"
 num-traits = "0.2.16"

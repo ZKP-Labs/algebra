@@ -8,7 +8,7 @@ use sha2::{Digest, Sha256};
 pub struct Ecdsa {
     pub e: Secp256k1,
     pub d: BigUint,
-    pub_key: ECCPoint,
+    pub pub_key: ECCPoint,
 }
 
 impl Ecdsa {

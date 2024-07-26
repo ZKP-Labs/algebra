@@ -1,7 +1,9 @@
 [workspace]
 members = [
     "elliptic_curve",
+    "feige_fiat_shamir",
     "finite_field",
+    "sum_check_protocol",
 ]
 
 exclude = []
