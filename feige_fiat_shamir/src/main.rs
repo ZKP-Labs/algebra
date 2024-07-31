@@ -44,7 +44,7 @@ pub fn identification_scheme(k: usize) -> bool {
         println!("Verification result: {}", rs);
 
         if !rs {
-            return false;
+            panic!("fail at round {}", round + 1);
         }
     }
 
