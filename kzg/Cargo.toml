@@ -1,0 +1,16 @@
+[package]
+name = "kzg"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pairing_ce = "0.28.5"
+primitive-types = "0.12.2"
+rand = "^0.4"
+serde = { version = "1.0.197", features = ["derive"] }
+ff_ce = "0.6"
+
+
+bls12_381 = "0.8.0"
+ff = "0.13"
+group = "0.13.0"

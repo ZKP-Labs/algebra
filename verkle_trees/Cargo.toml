@@ -1,0 +1,6 @@
+[package]
+name = "verkl_trees"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]

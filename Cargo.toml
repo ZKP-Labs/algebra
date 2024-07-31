@@ -2,8 +2,9 @@
 members = [
     "elliptic_curve",
     "feige_fiat_shamir",
-    "finite_field",
+    "finite_field", "kzg",
     "sum_check_protocol",
+    "verkle_trees",
 ]
 
 exclude = []
